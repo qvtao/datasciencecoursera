@@ -1,0 +1,18 @@
+library(ggplot2)
+library(data.table)
+# load data from workspace
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+
+#filter data in Baltimore City
+NEI<-subset(NEI,fips=="24510")
+#convert to data table and preprocess
+NEI<-data.table(NEI)
+NEI<-NEI[,sum(Emissions),by=c("type","year")]
+
+#draw graph
+png(filename="plot3.png",width = 800, height = 600)
+g<-qplot(year,V1,data=NEI,facets=.~type, xlab="year",ylab="PM25",
+         main="Four sources of PM2.5 emissions in Baltimore City from 1999 to 2008")
+g+geom_line()
+dev.off()
